@@ -1,10 +1,12 @@
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
+
 import Link from "next/link";
 import LogoutButton from "../components/LogoutButton";
 import SupabaseLogo from "../components/SupabaseLogo";
 import NextJsLogo from "../components/NextJsLogo";
 import BookButton from "@/components/BookButton";
+import Players from "@/components/Players";
 
 export const dynamic = "force-dynamic";
 
@@ -20,10 +22,6 @@ export default async function Index() {
     .order("date_time", { ascending: true })
     .gt("date_time", new Date().toISOString())
     .limit(1);
-
-  const { data: attendees, error } = await supabase
-    .from("upcoming_fixture_attendees")
-    .select("*");
 
   //   function formatFriendlyDate(dateStr: string) {
   //         const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' };
@@ -63,16 +61,9 @@ export default async function Index() {
           </li>
         ))}
       </ul>
-      <br />
+
       <h1 className="mt-10">Starting line up</h1>
-      <ol className="">
-        {attendees?.map((attendee) => (
-          <li className="list-decimal" key={attendee.id}>
-            {attendee.name}
-          </li>
-        ))}
-      </ol>
-      <BookButton />
+      <Players />
     </div>
   );
 }
