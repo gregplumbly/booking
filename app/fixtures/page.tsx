@@ -4,11 +4,6 @@
   export default async function Index() {
     const supabase = createServerComponentClient({ cookies });
 
-//   const {
-//     d: { user },
-//   } = await supabase.auth.getUser()
-
-//   console.log(user)
 
     const { data: fixtures} = await supabase
   .from('fixtures')
