@@ -64,6 +64,7 @@ export default function Players() {
 
   return (
     <>
+      <h1 className="text-2xl">{players.length} players</h1>
       {players && (
         <ol>
           {players.map((player, index) => (
