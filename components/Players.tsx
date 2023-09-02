@@ -66,14 +66,14 @@ export default function Players() {
     <>
       <h1 className="text-2xl">{players.length} players</h1>
       {players && (
-        <ol>
-          {players.map((player, index) => (
-            <li className="list-decimal" key={index}>
-              {player.name}
-            </li>
+        <ol className="list-decimal">
+          {Array.from({ length: 16 }).map((_, index) => (
+            <li key={index}>{players[index] ? players[index].name : `...`}</li>
           ))}
         </ol>
       )}
+      <h1 className="text-2xl">Subs</h1>
+
       <button
         onClick={addPlayer}
         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg px-5 py-2.5 mt-8 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
