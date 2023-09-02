@@ -33,6 +33,7 @@ export default function Players() {
   }, [supabase, updateCount]);
 
   const addPlayer = async () => {
+    console.log("addPlayer");
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -49,7 +50,11 @@ export default function Players() {
         setPlayers((prevPlayers) => [...prevPlayers, playerData[0]]);
         setUpdateCount((prevCount) => prevCount + 1);
       } else if (playerData && typeof playerData === "object") {
-        setPlayers((prevPlayers) => [...prevPlayers, playerData]);
+        setPlayers((prevPlayers) => [
+          ...prevPlayers,
+          { name: playerData[0].name },
+        ]);
+
         setUpdateCount((prevCount) => prevCount + 1);
       } else {
         console.warn("Unexpected player data format:", playerData);
@@ -69,7 +74,7 @@ export default function Players() {
         </ol>
       )}
       <button
-        // onClick={addPlayer}
+        onClick={addPlayer}
         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg px-5 py-2.5 mt-8 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
       >
         Play
