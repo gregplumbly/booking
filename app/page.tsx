@@ -54,13 +54,13 @@ export default async function Index() {
       </nav>
       {/* start booking */}
       <h1 className="mt-10">Up next</h1>
-      <ul className="">
+      {/* <ul className="">
         {fixtures?.map((fixture) => (
           <li className="text-2xl" key={fixture.id}>
             {fixture.date_time} Pitch 3 xcel
           </li>
         ))}
-      </ul>
+      </ul> */}
 
       <Players />
     </div>

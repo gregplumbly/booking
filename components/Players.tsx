@@ -2,6 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { RxAvatar } from "react-icons/fa";
+import { FaBeer } from "react-icons/fa";
 
 type Player = {
   name: string;
@@ -88,36 +99,64 @@ export default function Players() {
     }
   };
 
+  function isCurrentUser(player) {
+    if (!player || !user) return false;
+    return player.id === user.id;
+  }
+
+  function isPlaying(user) {
+    if (!user) return false;
+    return players.some((player) => player.id === user.id);
+  }
+
   return (
     <>
-      <h1 className="text-2xl">{players.length} players</h1>
-      {players && (
-        <ol className="list-decimal">
-          {Array.from({ length: 16 }).map((_, index) => (
-            <li key={index}>
-              {players[index] ? players[index].name : `...`}
-              {players[index] ? (
-                players[index].id === user?.id ? (
-                  <button className="text-white bg-red-500 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-1">
-                    X
-                  </button>
-                ) : (
-                  ""
-                )
-              ) : (
-                ""
-              )}
-            </li>
-          ))}
-        </ol>
-      )}
-      <h1 className="text-2xl">Waitlist</h1>
-      <button
-        onClick={addPlayer}
-        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg px-5 py-2.5 mt-8 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-      >
-        Play
-      </button>
+      <Card className="w-[350px]">
+        <CardHeader>
+          <CardTitle>Sep 5th</CardTitle>
+          <CardDescription>{players.length} of 16 players</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {players && (
+            <ul className="ml-3">
+              {Array.from({ length: players.length }).map((_, index) => (
+                <li
+                  className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-2"
+                  key={index}
+                >
+                  <div class="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+                    <svg
+                      class="absolute w-12 h-12 text-gray-400 -left-1"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                        clip-rule="evenodd"
+                      ></path>
+                    </svg>
+                  </div>
+
+                  {players[index] ? players[index].name + "(⚽ 🎽 🍺) " : ``}
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+        <CardFooter>
+          {isPlaying(user) ? (
+            <Button variant="destructive">I can no longer make it</Button>
+          ) : (
+            <Button onClick={addPlayer}>Play</Button>
+          )}
+        </CardFooter>
+      </Card>
+
+      {/* <h1 className="text-2xl"></h1> */}
+
+      {/* <h1 className="text-2xl">Waitlist</h1> */}
     </>
   );
 }
