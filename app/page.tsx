@@ -62,7 +62,6 @@ export default async function Index() {
         ))}
       </ul>
 
-      <h1 className="mt-10">Starting line up</h1>
       <Players />
     </div>
   );
