@@ -4,6 +4,9 @@
 // cancel logic
 // add to waitlist
 // bibs and balls
+// order by date added
+
+import { PostgrestError } from "@supabase/supabase-js";
 
 import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -18,13 +21,18 @@ import {
 } from "@/components/ui/card";
 
 type Player = {
+  id: string;
   name: string;
+};
+
+type User = {
+  id: string;
 };
 
 export default function Players() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [updateCount, setUpdateCount] = useState(0);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
 
   const supabase = createClientComponentClient();
 
@@ -33,6 +41,7 @@ export default function Players() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
+      console.log(user);
       setUser(user);
     }
 
@@ -65,37 +74,41 @@ export default function Players() {
   }, [supabase, updateCount]);
 
   const addPlayer = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    if (!user) {
+      console.log("User is null");
+      return;
+    }
 
-    const { data: playerData, error } = await supabase
-      .from("attendees")
-      .insert({ fixture_id: 3, user_id: user?.id })
-      .select();
+    try {
+      const { data: playerData, error } = await supabase
+        .from("attendees")
+        .insert({ fixture_id: 3, user_id: user.id })
+        .select();
 
-    if (error) {
-      console.log(error.message);
-    } else {
+      if (error) {
+        throw new Error(error.message);
+      }
+
       if (Array.isArray(playerData) && playerData.length > 0) {
         setPlayers((prevPlayers) => [...prevPlayers, playerData[0]]);
         setUpdateCount((prevCount) => prevCount + 1);
       } else if (playerData && typeof playerData === "object") {
         setPlayers((prevPlayers) => [
           ...prevPlayers,
-          { name: playerData[0].name },
+          { id: playerData[0].id, name: playerData[0].name },
         ]);
-
         setUpdateCount((prevCount) => prevCount + 1);
       } else {
         console.warn("Unexpected player data format:", playerData);
       }
+    } catch (error: any) {
+      console.log(error.message);
     }
   };
 
-  async function cancelPlaying(id) {
+  async function cancelPlaying(id: string) {
     try {
-      const { error } = await supabase
+      const { error }: { error: PostgrestError | null } = await supabase
         .from("attendees")
         .delete()
         .match({ user_id: id });
@@ -105,18 +118,18 @@ export default function Players() {
       }
 
       // Update the UI or perform other actions after successful deletion
-    } catch (error) {
+    } catch (error: any) {
       alert(error.message);
     }
     setUpdateCount((prevCount) => prevCount - 1);
   }
 
-  function isCurrentUser(player) {
+  function isCurrentUser(player: Player) {
     if (!player || !user) return false;
     return player.id === user.id;
   }
 
-  function isPlaying(user) {
+  function isPlaying(user: User | null) {
     if (!user) return false;
     return players.some((player) => player.id === user.id);
   }
@@ -158,7 +171,7 @@ export default function Players() {
           )}
         </CardContent>
         <CardFooter>
-          {isPlaying(user) ? (
+          {user && isPlaying(user) ? (
             <Button
               variant="destructive"
               onClick={() => cancelPlaying(user.id)}
