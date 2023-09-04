@@ -8,6 +8,8 @@
 // bibs and balls
 // order by date added
 // loading spinner
+// dark mode
+// upload profile photo
 
 import { PostgrestError } from "@supabase/supabase-js";
 
@@ -30,6 +32,7 @@ interface PlayersProps {
 type Player = {
   id: string;
   name: string;
+  item_name: string;
 };
 
 type User = {
@@ -105,7 +108,7 @@ export default function Players(props: PlayersProps) {
       } else if (playerData && typeof playerData === "object") {
         setPlayers((prevPlayers) => [
           ...prevPlayers,
-          { id: playerData[0].id, name: playerData[0].name },
+          { id: playerData[0].id, name: playerData[0].name, item_name: "" },
         ]);
         setUpdateCount((prevCount) => prevCount + 1);
       } else {
@@ -144,6 +147,18 @@ export default function Players(props: PlayersProps) {
     return players.some((player) => player.id === user.id);
   }
 
+  function displayPlayer(player: Player) {
+    console.log(player);
+    if (!player) return null;
+    if (player.item_name === null) {
+      return player.name;
+    } else if (player.item_name === "bibs") {
+      return player.name + " " + "🎽";
+    } else if (player.item_name === "balls") {
+      return player.name + " " + "⚽";
+    }
+  }
+
   return (
     <>
       <Card className="w-[350px]">
@@ -173,8 +188,7 @@ export default function Players(props: PlayersProps) {
                       ></path>
                     </svg>
                   </div>
-
-                  {players[index] ? players[index].name + "(⚽ 🎽 🍺) " : ``}
+                  {displayPlayer(players[index])}
                 </li>
               ))}
             </ul>
