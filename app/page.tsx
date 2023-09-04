@@ -11,6 +11,8 @@ import Players from "@/components/Players";
 export const dynamic = "force-dynamic";
 
 export default async function Index() {
+  const currentDate = new Date();
+
   const supabase = createServerComponentClient({ cookies });
   const {
     data: { user },
@@ -23,12 +25,21 @@ export default async function Index() {
     .gt("date_time", new Date().toISOString())
     .limit(1);
 
-  //   function formatFriendlyDate(dateStr: string) {
-  //         const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' };
+  console.log(fixtures);
 
-  //     const date = new Date(dateStr);
-  //     return date.toLocaleDateString('en-UK', options);
-  // }
+  function formatFriendlyDate(dateStr: string) {
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "UTC",
+    };
+
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("en-UK", options);
+  }
 
   return (
     <div className="w-full flex flex-col items-center">
@@ -62,7 +73,13 @@ export default async function Index() {
         ))}
       </ul> */}
 
-      <Players />
+      <Players
+        formatted_date={
+          fixtures
+            ? formatFriendlyDate(fixtures[0].date_time)
+            : "nothing scheduled"
+        }
+      />
     </div>
   );
 }

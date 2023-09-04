@@ -1,5 +1,6 @@
 "use client";
 
+// Use date of next game in Players component. DONE
 // Add display name
 // cancel logic
 // add to waitlist
@@ -20,6 +21,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+interface PlayersProps {
+  formatted_date: string;
+}
+
 type Player = {
   id: string;
   name: string;
@@ -29,7 +34,7 @@ type User = {
   id: string;
 };
 
-export default function Players() {
+export default function Players(props: PlayersProps) {
   const [players, setPlayers] = useState<Player[]>([]);
   const [updateCount, setUpdateCount] = useState(0);
   const [user, setUser] = useState<User | null>(null);
@@ -138,7 +143,7 @@ export default function Players() {
     <>
       <Card className="w-[350px]">
         <CardHeader>
-          <CardTitle>Sep 5th</CardTitle>
+          <CardTitle>{props.formatted_date}</CardTitle>
           <CardDescription>{players.length} of 16 players</CardDescription>
         </CardHeader>
         <CardContent>
