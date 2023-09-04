@@ -1,11 +1,13 @@
 "use client";
 
 // Use date of next game in Players component. DONE
+//  update Play button to reflect login status.
 // Add display name
 // cancel logic
-// add to waitlist
+// add to waitlist. show break after 16 players. chnage the button text
 // bibs and balls
 // order by date added
+// loading spinner
 
 import { PostgrestError } from "@supabase/supabase-js";
 
@@ -57,7 +59,10 @@ export default function Players(props: PlayersProps) {
     const fetchPlayers = async () => {
       const { data: playersData, error } = await supabase
         .from("upcoming_fixture_attendees")
-        .select("*");
+        .select("*")
+        .order("timestamp", { ascending: true });
+
+      console.log(playersData);
 
       if (error) {
         console.log("error", error);
@@ -87,7 +92,7 @@ export default function Players(props: PlayersProps) {
     try {
       const { data: playerData, error } = await supabase
         .from("attendees")
-        .insert({ fixture_id: 3, user_id: user.id })
+        .insert({ fixture_id: 3, user_id: user.id, timestamp: new Date() })
         .select();
 
       if (error) {
