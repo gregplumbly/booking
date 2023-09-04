@@ -1,5 +1,10 @@
 "use client";
 
+// Add display name
+// cancel logic
+// add to waitlist
+// bibs and balls
+
 import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Button } from "@/components/ui/button";
@@ -99,6 +104,25 @@ export default function Players() {
     }
   };
 
+  async function cancelPlaying(id) {
+    console.log("cancelPlaying");
+    try {
+      const { error } = await supabase
+        .from("attendees")
+        .delete()
+        .match({ user_id: id });
+
+      if (error) {
+        throw error;
+      }
+
+      // Update the UI or perform other actions after successful deletion
+    } catch (error) {
+      alert(error.message);
+    }
+    setUpdateCount((prevCount) => prevCount - 1);
+  }
+
   function isCurrentUser(player) {
     if (!player || !user) return false;
     return player.id === user.id;
@@ -147,7 +171,12 @@ export default function Players() {
         </CardContent>
         <CardFooter>
           {isPlaying(user) ? (
-            <Button variant="destructive">I can no longer make it</Button>
+            <Button
+              variant="destructive"
+              onClick={() => cancelPlaying(user.id)}
+            >
+              I can no longer make it
+            </Button>
           ) : (
             <Button onClick={addPlayer}>Play</Button>
           )}
