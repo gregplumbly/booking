@@ -16,8 +16,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { RxAvatar } from "react-icons/fa";
-import { FaBeer } from "react-icons/fa";
 
 type Player = {
   name: string;
@@ -26,9 +24,9 @@ type Player = {
 export default function Players() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [updateCount, setUpdateCount] = useState(0);
-  const supabase = createClientComponentClient();
-
   const [user, setUser] = useState(null);
+
+  const supabase = createClientComponentClient();
 
   useEffect(() => {
     async function fetchUser() {
@@ -41,16 +39,8 @@ export default function Players() {
     fetchUser();
   }, []);
 
-  if (user) {
-    // User is logged in
-    console.log(user);
-  } else {
-    // User is not logged in
-    console.log("no user");
-  }
-
   useEffect(() => {
-    const fetchTodos = async () => {
+    const fetchPlayers = async () => {
       const { data: playersData, error } = await supabase
         .from("upcoming_fixture_attendees")
         .select("*");
@@ -71,11 +61,10 @@ export default function Players() {
       } = await supabase.auth.getUser();
     };
 
-    fetchTodos();
+    fetchPlayers();
   }, [supabase, updateCount]);
 
   const addPlayer = async () => {
-    console.log("addPlayer");
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -105,7 +94,6 @@ export default function Players() {
   };
 
   async function cancelPlaying(id) {
-    console.log("cancelPlaying");
     try {
       const { error } = await supabase
         .from("attendees")
@@ -148,17 +136,17 @@ export default function Players() {
                   className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-2"
                   key={index}
                 >
-                  <div class="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+                  <div className="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
                     <svg
-                      class="absolute w-12 h-12 text-gray-400 -left-1"
+                      className="absolute w-12 h-12 text-gray-400 -left-1"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                   </div>
