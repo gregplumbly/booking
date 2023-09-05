@@ -2,6 +2,7 @@
 
 // Use date of next game in Players component. DONE
 //  update Play button to reflect login status.
+// UI for
 // Add display name
 // cancel logic
 // add to waitlist. show break after 16 players. chnage the button text
@@ -15,6 +16,8 @@ import { PostgrestError } from "@supabase/supabase-js";
 
 import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { Checkbox } from "@/components/ui/checkbox";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -32,7 +35,7 @@ interface PlayersProps {
 type Player = {
   id: string;
   name: string;
-  item_name: string;
+  items: [] | null;
 };
 
 type User = {
@@ -61,7 +64,7 @@ export default function Players(props: PlayersProps) {
   useEffect(() => {
     const fetchPlayers = async () => {
       const { data: playersData, error } = await supabase
-        .from("upcoming_fixture_attendees")
+        .from("fixture_3_unique_attendees")
         .select("*")
         .order("timestamp", { ascending: true });
 
@@ -95,8 +98,22 @@ export default function Players(props: PlayersProps) {
     try {
       const { data: playerData, error } = await supabase
         .from("attendees")
-        .insert({ fixture_id: 3, user_id: user.id, timestamp: new Date() })
+        .insert({
+          fixture_id: 3,
+          user_id: user.id,
+          timestamp: new Date(),
+        })
         .select();
+
+      const attendeeId = playerData[0].id;
+      console.log(attendeeId);
+
+      await supabase.from("items").insert([
+        {
+          attendee_id: attendeeId,
+          item_name: "ball",
+        },
+      ]);
 
       if (error) {
         throw new Error(error.message);
@@ -148,15 +165,25 @@ export default function Players(props: PlayersProps) {
   }
 
   function displayPlayer(player: Player) {
-    console.log(player);
+    console.log(player.items);
+
+    let display = player.name;
+
     if (!player) return null;
-    if (player.item_name === null) {
+
+    if (!player.items) {
       return player.name;
-    } else if (player.item_name === "bibs") {
-      return player.name + " " + "🎽";
-    } else if (player.item_name === "balls") {
-      return player.name + " " + "⚽";
     }
+    if (player.items.includes("bib")) {
+      display += "🎽";
+    }
+    if (player.items.includes("ball")) {
+      display += "⚽";
+    } else {
+      return player.name;
+    }
+
+    return display;
   }
 
   return (
@@ -193,6 +220,7 @@ export default function Players(props: PlayersProps) {
               ))}
             </ul>
           )}
+          <div className="border-2 border-blue-500 max-w-full"></div>
         </CardContent>
         <CardFooter>
           {user && isPlaying(user) ? (
@@ -203,7 +231,27 @@ export default function Players(props: PlayersProps) {
               I can no longer make it
             </Button>
           ) : (
-            <Button onClick={addPlayer}>Play</Button>
+            <div>
+              <div className="flex items-center space-x-2 mb-2">
+                <Checkbox id="terms" />
+                <label
+                  htmlFor="terms"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  I can bring a ball
+                </label>
+              </div>
+              <div className="flex items-center space-x-2 mb-2">
+                <Checkbox id="terms" />
+                <label
+                  htmlFor="terms"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  I can bring bibs
+                </label>
+              </div>
+              <Button onClick={addPlayer}>Play</Button>
+            </div>
           )}
         </CardFooter>
       </Card>
