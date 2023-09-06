@@ -1,7 +1,6 @@
 "use client";
 
 // update insert to reflect bibs and ball checkboxes
-//  update Play button to reflect login status.
 // Add display name
 // cancel logic
 // add to waitlist. show break after 16 players. chnage the button text
@@ -10,6 +9,7 @@
 // loading spinner
 // dark mode
 // upload profile photo
+//  update Play button to reflect login status.
 
 import { PostgrestError } from "@supabase/supabase-js";
 
@@ -29,6 +29,7 @@ import {
 
 interface PlayersProps {
   formatted_date: string;
+  fixture_id: string;
 }
 
 type Player = {
@@ -63,7 +64,7 @@ export default function Players(props: PlayersProps) {
   useEffect(() => {
     const fetchPlayers = async () => {
       const { data: playersData, error } = await supabase
-        .from("fixture_3_unique_attendees")
+        .from("upcoming_fixture_attendees")
         .select("*")
         .order("timestamp", { ascending: true });
 
@@ -98,7 +99,7 @@ export default function Players(props: PlayersProps) {
       const { data: playerData, error } = await supabase
         .from("attendees")
         .insert({
-          fixture_id: 3,
+          fixture_id: props.fixture_id,
           user_id: user.id,
           timestamp: new Date(),
         })
@@ -140,7 +141,8 @@ export default function Players(props: PlayersProps) {
       const { error }: { error: PostgrestError | null } = await supabase
         .from("attendees")
         .delete()
-        .match({ user_id: id });
+        .eq("user_id", id)
+        .eq("fixture_id", props.fixture_id);
 
       if (error) {
         throw error;

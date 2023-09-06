@@ -79,6 +79,7 @@ export default async function Index() {
             ? formatFriendlyDate(fixtures[0].date_time)
             : "nothing scheduled"
         }
+        fixture_id={fixtures ? fixtures[0].id : null}
       />
     </div>
   );
