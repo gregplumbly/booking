@@ -39,7 +39,8 @@ type CheckedState = boolean;
 type Player = {
   id: string;
   name: string;
-  items: [] | null;
+  items: string[] | null;
+  item_name?: string;
 };
 
 type User = {
@@ -114,40 +115,37 @@ export default function Players(props: PlayersProps) {
         })
         .select();
 
-      const attendeeId = playerData[0].id;
-      console.log(attendeeId);
+      if (playerData && playerData.length > 0) {
+        const attendeeId = playerData[0].id;
 
+        if (ballIsChecked) {
+          await supabase.from("items").insert([
+            {
+              attendee_id: attendeeId,
+              item_name: "ball",
+            },
+          ]);
+        }
+
+        if (bibIsChecked) {
+          await supabase.from("items").insert([
+            {
+              attendee_id: attendeeId,
+              item_name: "bib",
+            },
+          ]);
+        }
+      }
       // get the value of the checkbox with the id of bibs
-
-      if (ballIsChecked) {
-        await supabase.from("items").insert([
-          {
-            attendee_id: attendeeId,
-            item_name: "ball",
-          },
-        ]);
-      }
-
-      if (bibIsChecked) {
-        await supabase.from("items").insert([
-          {
-            attendee_id: attendeeId,
-            item_name: "bib",
-          },
-        ]);
-      }
 
       if (error) {
         throw new Error(error.message);
       }
 
       if (Array.isArray(playerData) && playerData.length > 0) {
-        setPlayers((prevPlayers) => [...prevPlayers, playerData[0]]);
-        setUpdateCount((prevCount) => prevCount + 1);
-      } else if (playerData && typeof playerData === "object") {
         setPlayers((prevPlayers) => [
           ...prevPlayers,
-          { id: playerData[0].id, name: playerData[0].name, item_name: "" },
+          { id: playerData[0].id, name: playerData[0].name, items: null },
         ]);
         setUpdateCount((prevCount) => prevCount + 1);
       } else {
