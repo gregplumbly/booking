@@ -16,6 +16,7 @@ import { PostgrestError } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,11 +27,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Check } from "lucide-react";
 
 interface PlayersProps {
   formatted_date: string;
   fixture_id: string;
 }
+
+type CheckedState = boolean;
 
 type Player = {
   id: string;
@@ -46,6 +50,8 @@ export default function Players(props: PlayersProps) {
   const [players, setPlayers] = useState<Player[]>([]);
   const [updateCount, setUpdateCount] = useState(0);
   const [user, setUser] = useState<User | null>(null);
+  const [ballIsChecked, setBallIsChecked] = useState(false);
+  const [bibIsChecked, setBibIsChecked] = useState(false);
 
   const supabase = createClientComponentClient();
 
@@ -95,6 +101,9 @@ export default function Players(props: PlayersProps) {
       return;
     }
 
+    console.log("add player Ball Checkbox value:", ballIsChecked);
+    console.log("add player Bib Checkbox value:", bibIsChecked);
+
     try {
       const { data: playerData, error } = await supabase
         .from("attendees")
@@ -108,12 +117,25 @@ export default function Players(props: PlayersProps) {
       const attendeeId = playerData[0].id;
       console.log(attendeeId);
 
-      await supabase.from("items").insert([
-        {
-          attendee_id: attendeeId,
-          item_name: "ball",
-        },
-      ]);
+      // get the value of the checkbox with the id of bibs
+
+      if (ballIsChecked) {
+        await supabase.from("items").insert([
+          {
+            attendee_id: attendeeId,
+            item_name: "ball",
+          },
+        ]);
+      }
+
+      if (bibIsChecked) {
+        await supabase.from("items").insert([
+          {
+            attendee_id: attendeeId,
+            item_name: "bib",
+          },
+        ]);
+      }
 
       if (error) {
         throw new Error(error.message);
@@ -231,18 +253,30 @@ export default function Players(props: PlayersProps) {
           ) : (
             <div>
               <div className="flex items-center space-x-2 mb-2">
-                <Checkbox id="terms" />
+                <Checkbox
+                  id="ball"
+                  checked={ballIsChecked}
+                  onCheckedChange={(checked: CheckedState) =>
+                    setBallIsChecked(checked)
+                  }
+                />
                 <label
-                  htmlFor="terms"
+                  htmlFor="ball"
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   I can bring a ball
                 </label>
               </div>
               <div className="flex items-center space-x-2 mb-2">
-                <Checkbox id="terms" />
+                <Checkbox
+                  id="bibs"
+                  checked={bibIsChecked}
+                  onCheckedChange={(checked: CheckedState) =>
+                    setBibIsChecked(checked)
+                  }
+                />
                 <label
-                  htmlFor="terms"
+                  htmlFor="bibs"
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   I can bring bibs
