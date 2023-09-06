@@ -1,8 +1,7 @@
 "use client";
 
-// Use date of next game in Players component. DONE
+// update insert to reflect bibs and ball checkboxes
 //  update Play button to reflect login status.
-// UI for
 // Add display name
 // cancel logic
 // add to waitlist. show break after 16 players. chnage the button text
@@ -179,8 +178,6 @@ export default function Players(props: PlayersProps) {
     }
     if (player.items.includes("ball")) {
       display += "⚽";
-    } else {
-      return player.name;
     }
 
     return display;
@@ -220,9 +217,8 @@ export default function Players(props: PlayersProps) {
               ))}
             </ul>
           )}
-          <div className="border-2 border-blue-500 max-w-full"></div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="py-2 border-t-2 border-gray-100">
           {user && isPlaying(user) ? (
             <Button
               variant="destructive"
@@ -255,10 +251,6 @@ export default function Players(props: PlayersProps) {
           )}
         </CardFooter>
       </Card>
-
-      {/* <h1 className="text-2xl"></h1> */}
-
-      {/* <h1 className="text-2xl">Waitlist</h1> */}
     </>
   );
 }
