@@ -1,18 +1,11 @@
 "use client";
 
-// update insert to reflect bibs and ball checkboxes
-// Add display name
-// cancel logic
-// add to waitlist. show break after 16 players. chnage the button text
-// bibs and balls
-// order by date added
-// loading spinner
-// dark mode
-// upload profile photo
-//  update Play button to reflect login status.
+// TODO dd display name
+// TODO update the play button based on login status
+// TODO add to waitlist. show break after 16 players. chnage the button text
 
 import { PostgrestError } from "@supabase/supabase-js";
-
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -205,6 +198,67 @@ export default function Players(props: PlayersProps) {
     return display;
   }
 
+  function renderFormOptions() {
+    if (!user) {
+      return (
+        <div>
+          <Link
+            href="/login"
+            className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
+          >
+            Login to play
+          </Link>
+        </div>
+      );
+    } else if (isPlaying(user)) {
+      return (
+        <div>
+          <Button variant="destructive" onClick={() => cancelPlaying(user.id)}>
+            I can no longer make it
+          </Button>
+        </div>
+      );
+    } else if (user && !isPlaying(user)) {
+      return (
+        <div>
+          <div className="flex items-center space-x-2 mb-3 mt-3">
+            <Checkbox
+              id="ball"
+              checked={ballIsChecked}
+              onCheckedChange={(checked: CheckedState) =>
+                setBallIsChecked(checked)
+              }
+            />
+            <label
+              htmlFor="ball"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              I can bring a ball
+            </label>
+          </div>
+          <div className="flex items-center space-x-2 mb-3">
+            <Checkbox
+              id="bibs"
+              checked={bibIsChecked}
+              onCheckedChange={(checked: CheckedState) =>
+                setBibIsChecked(checked)
+              }
+            />
+            <label
+              htmlFor="bibs"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              I can bring bibs
+            </label>
+          </div>
+          <Button className="mb-3" onClick={addPlayer}>
+            Play
+          </Button>
+        </div>
+      );
+    }
+  }
+
   return (
     <>
       <Card className="w-[350px]">
@@ -241,48 +295,7 @@ export default function Players(props: PlayersProps) {
           )}
         </CardContent>
         <CardFooter className="py-2 border-t-2 border-gray-100">
-          {user && isPlaying(user) ? (
-            <Button
-              variant="destructive"
-              onClick={() => cancelPlaying(user.id)}
-            >
-              I can no longer make it
-            </Button>
-          ) : (
-            <div>
-              <div className="flex items-center space-x-2 mb-2">
-                <Checkbox
-                  id="ball"
-                  checked={ballIsChecked}
-                  onCheckedChange={(checked: CheckedState) =>
-                    setBallIsChecked(checked)
-                  }
-                />
-                <label
-                  htmlFor="ball"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  I can bring a ball
-                </label>
-              </div>
-              <div className="flex items-center space-x-2 mb-2">
-                <Checkbox
-                  id="bibs"
-                  checked={bibIsChecked}
-                  onCheckedChange={(checked: CheckedState) =>
-                    setBibIsChecked(checked)
-                  }
-                />
-                <label
-                  htmlFor="bibs"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  I can bring bibs
-                </label>
-              </div>
-              <Button onClick={addPlayer}>Play</Button>
-            </div>
-          )}
+          {renderFormOptions()}
         </CardFooter>
       </Card>
     </>
