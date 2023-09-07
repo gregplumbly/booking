@@ -34,6 +34,7 @@ type Player = {
   name: string;
   items: string[] | null;
   item_name?: string;
+  email?: string;
 };
 
 type User = {
@@ -64,9 +65,9 @@ export default function Players(props: PlayersProps) {
   useEffect(() => {
     const fetchPlayers = async () => {
       const { data: playersData, error } = await supabase
-        .from("upcoming_fixture_attendees")
+        .from("upcoming_attendees")
         .select("*")
-        .order("timestamp", { ascending: true });
+        .eq("id", props.fixture_id);
 
       console.log(playersData);
 
@@ -95,6 +96,8 @@ export default function Players(props: PlayersProps) {
       return;
     }
 
+    console.log(user.id);
+
     console.log("add player Ball Checkbox value:", ballIsChecked);
     console.log("add player Bib Checkbox value:", bibIsChecked);
 
@@ -107,6 +110,8 @@ export default function Players(props: PlayersProps) {
           timestamp: new Date(),
         })
         .select();
+
+      console.log("playt" + error);
 
       if (playerData && playerData.length > 0) {
         const attendeeId = playerData[0].id;
@@ -132,6 +137,7 @@ export default function Players(props: PlayersProps) {
       // get the value of the checkbox with the id of bibs
 
       if (error) {
+        console.log("error", error);
         throw new Error(error.message);
       }
 
@@ -181,7 +187,7 @@ export default function Players(props: PlayersProps) {
   function displayPlayer(player: Player) {
     console.log(player.items);
 
-    let display = player.name;
+    let display = player.email;
 
     if (!player) return null;
 
