@@ -67,7 +67,7 @@ export default function Players(props: PlayersProps) {
       const { data: playersData, error } = await supabase
         .from("upcoming_attendees")
         .select("*")
-        .eq("id", props.fixture_id);
+        .eq("fixture_id", props.fixture_id);
 
       console.log(playersData);
 
@@ -181,7 +181,9 @@ export default function Players(props: PlayersProps) {
 
   function isPlaying(user: User | null) {
     if (!user) return false;
-    return players.some((player) => player.id === user.id);
+    console.log("isPlaying:user" + user.id);
+    console.log(players);
+    return players.some((player) => player.user_id === user.id);
   }
 
   function displayPlayer(player: Player) {

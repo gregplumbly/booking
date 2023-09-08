@@ -65,13 +65,6 @@ export default async function Index() {
       </nav>
       {/* start booking */}
       <h1 className="mt-10">Up next</h1>
-      {/* <ul className="">
-        {fixtures?.map((fixture) => (
-          <li className="text-2xl" key={fixture.id}>
-            {fixture.date_time} Pitch 3 xcel
-          </li>
-        ))}
-      </ul> */}
 
       <Players
         formatted_date={
@@ -81,6 +74,14 @@ export default async function Index() {
         }
         fixture_id={fixtures ? fixtures[0].id : null}
       />
+      {/* <Players
+        formatted_date={
+          fixtures
+            ? formatFriendlyDate(fixtures[1].date_time)
+            : "nothing scheduled"
+        }
+        fixture_id={fixtures ? fixtures[1].id : null}
+      /> */}
     </div>
   );
 }
