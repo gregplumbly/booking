@@ -30,7 +30,7 @@ interface PlayersProps {
 type CheckedState = boolean;
 
 type Player = {
-  id: string;
+  user_id: string;
   name: string;
   items: string[] | null;
   item_name?: string;
@@ -144,7 +144,11 @@ export default function Players(props: PlayersProps) {
       if (Array.isArray(playerData) && playerData.length > 0) {
         setPlayers((prevPlayers) => [
           ...prevPlayers,
-          { id: playerData[0].id, name: playerData[0].name, items: null },
+          {
+            user_id: playerData[0].user_id,
+            name: playerData[0].name,
+            items: null,
+          },
         ]);
         setUpdateCount((prevCount) => prevCount + 1);
       } else {
@@ -176,7 +180,7 @@ export default function Players(props: PlayersProps) {
 
   function isCurrentUser(player: Player) {
     if (!player || !user) return false;
-    return player.id === user.id;
+    return player.user_id === user.id;
   }
 
   function isPlaying(user: User | null) {
