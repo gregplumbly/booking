@@ -67,7 +67,8 @@ export default function Players(props: PlayersProps) {
       const { data: playersData, error } = await supabase
         .from("upcoming_attendees")
         .select("*")
-        .eq("fixture_id", props.fixture_id);
+        .eq("fixture_id", props.fixture_id)
+        .order("timestamp", { ascending: true });
 
       console.log(playersData);
 
